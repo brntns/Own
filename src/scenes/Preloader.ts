@@ -15,19 +15,23 @@ export default class Preloader extends Phaser.Scene {
     this.load.spritesheet("sokoban", "character/herald.png", {
       frameWidth: 32,
     });
+    this.load.spritesheet("chest", "dungeons/chest.png", {
+      frameWidth: 24,
+    });
+    this.load.spritesheet("hearts", "character/hearts.png", {
+      frameWidth: 13,
+    });
     this.load.spritesheet("bullet", "character/bullet.png", {
       frameWidth: 16,
     });
-    // this.load.image("door", "dungeons/walls.png");
     this.load.spritesheet("door", "dungeons/walls.png", {
       frameWidth: 32,
     });
-    
   }
 
   create() {
     // start game scene
-    this.scene.start("Userinterface");
+    // this.scene.start("Userinterface");
     this.scene.start("Game");
   }
 }

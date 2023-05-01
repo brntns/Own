@@ -10,7 +10,7 @@ export default class Map {
     this.map = map;
     this.scene = scene;
     this.miniMap = this.scene.physics.add.staticGroup();
-    const BG = this.scene.add.rectangle(38, 38, 62, 62, 0x000000);
+    const BG = this.scene.add.rectangle(558, 38, 62, 62, 0x000000);
     BG.alpha = 0.7;
   }
   public createMiniMap(map: number[][]) {
@@ -19,7 +19,7 @@ export default class Map {
       for (let width = 0; width < map[height].length; width++) {
         if (map[height][width] == 1) {
           const sprite = this.scene.physics.add.sprite(
-            width * 14 + 16,
+            width * 14 + 535,
             height * 14 + 16,
             "door",
             7
@@ -29,13 +29,13 @@ export default class Map {
         }
         if (map[height][width] == 2) {
           const sprite = this.scene.physics.add.sprite(
-            width * 14 + 16,
+            width * 14 + 535,
             height * 14 + 16,
             "door",
             7
           );
           sprite.scale = 0.35;
-          sprite.tint = 0xc30009;
+          sprite.tint = 0x8e0606;
           this.miniMap.add(sprite);
         }
       }

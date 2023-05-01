@@ -2,19 +2,23 @@ import * as Phaser from "phaser";
 
 import Bullet from "../player/Bullet";
 import Game from "../scenes/Game";
+import eventsCenter from "../interface/EventCenter";
 
 export default class Player {
-  keys: Phaser.Types.Input.Keyboard.CursorKeys;
-  keyW: Phaser.Input.Keyboard.Key;
-  keyS: Phaser.Input.Keyboard.Key;
-  keyA: Phaser.Input.Keyboard.Key;
-  keyD: Phaser.Input.Keyboard.Key;
+  private keys: Phaser.Types.Input.Keyboard.CursorKeys;
+  private keyW: Phaser.Input.Keyboard.Key;
+  private keyS: Phaser.Input.Keyboard.Key;
+  private keyA: Phaser.Input.Keyboard.Key;
+  private keyD: Phaser.Input.Keyboard.Key;
   private scene: Game;
   sprite: Phaser.Physics.Arcade.Sprite;
+  lives: number;
 
-  constructor(scene: Game, x: number, y: number) {
+  constructor(scene: Game, x: number, y: number, lives: number) {
     this.scene = scene;
+    this.lives = lives;
     const anims = scene.anims;
+    eventsCenter.emit("update-lives", this.lives);
     anims.create({
       key: "idle",
       frames: anims.generateFrameNumbers("sokoban", {
@@ -76,11 +80,14 @@ export default class Player {
     this.keyA = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyD = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
   }
-
+  removeLives() {
+    this.lives--;
+    eventsCenter.emit("update-lives", this.lives);
+  }
   update() {
     const keys = this.keys;
     const sprite = this.sprite;
-    const speed =150;
+    const speed = 150;
 
     // Stop any previous movement from the last frame
     sprite.setVelocity(0);
