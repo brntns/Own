@@ -4,6 +4,8 @@ import Game from "../scenes/Game";
 export default class Enemy extends Phaser.Physics.Arcade.Sprite {
   scene: Game;
   room: number;
+  lives = 3;
+  sprite: Phaser.Physics.Arcade.Sprite;
 
   constructor(scene: Game, x, y, room) {
     super(scene, x, y, "beholder");
@@ -13,36 +15,39 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     this.scene.physics.world.enable(this);
     this.body.setSize(16, 16);
+    this.sprite = this;
+    const anims = scene.anims;
+
+    anims.create({
+      key: "idle_beholder",
+      frames: anims.generateFrameNumbers("beholder", {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
+    this.sprite.anims.play("idle_beholder");
   }
-  update(player, room) {
-    if (this.room === room) {
-      const dx = player.x - this.x;
-      const dy = player.y - this.y;
-      const angle = Math.atan2(dy, dx);
-      const speed = 100;
-      this.x += speed * Math.cos(angle);
-      this.y += speed * Math.sin(angle);
+  removeLives() {
+    this.lives--;
+    console.log("removing lives", this.lives);
+    if (this.lives == 0) {
+      this.destroy(true);
     }
+  }
+  destroy(fromScene?: boolean) {
+    console.log("destroying");
+    super.destroy(fromScene);
   }
   moveToPlayer(playerX: number, playerY: number, room: number): void {
     if (this.room === room) {
-      const speed = 50;
+      const speed = 20; // Set a movement speed
       const angle = Phaser.Math.Angle.Between(this.x, this.y, playerX, playerY);
-      const distance = Phaser.Math.Distance.Between(
-        this.x,
-        this.y,
-        playerX,
-        playerY
-      );
-      const duration = (distance / speed) * 1000;
-      const tween = this.scene.add.tween({
-        targets: this,
-        x: playerX,
-        y: playerY,
-        duration: duration,
-        ease: "Linear",
-        repeat: 0,
-      });
+      const velocity = new Phaser.Math.Vector2(Math.cos(angle), Math.sin(angle))
+        .normalize()
+        .scale(speed);
+      this.setVelocity(velocity.x, velocity.y);
     }
   }
 }

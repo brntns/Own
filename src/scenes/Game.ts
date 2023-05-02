@@ -42,37 +42,25 @@ export default class Game extends Phaser.Scene {
       15
     );
     this.createEnemies(this.dungeon.Map);
-    // this.enemies = [];
-    // for (let y = 0; y < this.dungeon.Map.length; y++) {
-    //   for (let x = 0; x < this.dungeon.Map[y].length; x++) {
-    //     if (this.dungeon.Map[y][x] === 1) {
-    //       console.log("create Enemy", x * WIDTH + 100, y * HEIGHT + 100);
-    //       this.enemies.push(new Enemy(this, x * WIDTH + 100, y * HEIGHT + 100));
-    //     }
-    //   }
-    // }
-    // console.log(this.enemies
-    // this.enemies = this.createEnemies(this.dungeon.Map);
     // Camera
     this.cameras.main.pan(this.player.sprite.x, this.player.sprite.y, 1600);
-    // Create Beholder
-    // this.createEnemies();
     // Collision
     const that = this;
     this.physics.add.collider(this.player.sprite, this.dungeon.map);
-    // this.physics.add.collider(this.beholders, this.player.sprite, function () {
-    //   // console.log(that.player.lives)
-    //   that.player.sprite.x = that.player.sprite.x + 50;
-    //   that.player.removeLives();
-    // });
+    this.physics.add.collider(this.enemies, this.player.sprite, function () {
+      that.player.sprite.x = that.player.sprite.x + 50;
+      that.player.removeLives();
+    });
     this.physics.add.collider(this.enemies, this.dungeon.map);
+    this.physics.add.collider(this.enemies, this.player.sprite);
+    this.physics.add.collider(this.enemies, this.enemies);
 
     this.physics.add.collider(
       this.projectiles,
       this.enemies,
       function (projectile, enemy) {
         const behold = enemy as Enemy;
-        behold.destroy();
+        behold.removeLives();
         projectile.destroy();
         // that.checkRoomForEnemies();
       }
@@ -95,43 +83,7 @@ export default class Game extends Phaser.Scene {
       }
     );
   }
-  // checkRoomForEnemies() {
-  //   if (this.beholders.getMatching("room", this.dungeon.room).length == 0) {
-  //     this.dungeon.openDoors();
-  //   }
-  // }
-  // createEnemies() {
-  //   for (let width = 0; width < this.dungeon.width; width++) {
-  //     for (let height = 0; height < this.dungeon.height; height++) {
-  //       if (this.dungeon.Map[height][width] == 1) {
-  //         for (let index = 0; index < 3; index++) {
-  //           new Beholder(
-  //             this,
-  //             width * WIDTH + (100 + index * 20),
-  //             height * HEIGHT + (100 + index * 20),
-  //             "beholder",
-  //             1,
-  //             height * 4 + width + 1
-  //           );
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-  // createEnemies(dungeon: number[][]) {
-  //   const enemies = this.add.group();
 
-  //   for (let y = 0; y < dungeon.length; y++) {
-  //     for (let x = 0; x < dungeon[y].length; x++) {
-  //       if (dungeon[y][x] === 1) {
-  //         const enemy = new Enemy(this, x * WIDTH + 100, y * HEIGHT + 100);
-  //         enemies.add(enemy);
-  //       }
-  //     }
-  //   }
-
-  //   return enemies;
-  // }
   createEnemies(map) {
     const rooms = [];
 
@@ -146,21 +98,21 @@ export default class Game extends Phaser.Scene {
 
     // Create an enemy in each room
     for (let i = 0; i < rooms.length; i++) {
-      const enemy = new Enemy(
-        this,
-        rooms[i].x,
-        rooms[i].y,
-        rooms[i].row * this.dungeon.Map.length + rooms[i].col
-      );
-      // enemy.room = i + 1;
-      this.enemies.add(enemy);
+      for (let index = 0; index < 3; index++) {
+        const enemy = new Enemy(
+          this,
+          rooms[i].x + index * 100,
+          rooms[i].y + index * 100,
+          rooms[i].row * this.dungeon.Map.length + rooms[i].col
+        );
+        this.enemies.add(enemy);
+      }
     }
     console.log(this.enemies);
   }
   update() {
     this.player.update();
     this.enemies.getChildren().forEach((enemy: Enemy) => {
-      // enemy.update(this.player.sprite, this.dungeon.room);
       enemy.moveToPlayer(
         this.player.sprite.x,
         this.player.sprite.y,
