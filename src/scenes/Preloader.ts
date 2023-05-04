@@ -27,11 +27,22 @@ export default class Preloader extends Phaser.Scene {
     this.load.spritesheet("door", "dungeons/walls.png", {
       frameWidth: 32,
     });
+
+  
   }
 
   create() {
     // start game scene
     // this.scene.start("Userinterface");
+    this.anims.create({
+      key: "idle_beholder",
+      frames: this.anims.generateFrameNumbers("beholder", {
+        start: 0,
+        end: 1,
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
     this.scene.start("Game");
   }
 }
@@ -48,7 +59,7 @@ const config = {
   physics: {
     default: "arcade",
     arcade: {
-      debug: true,
+      // debug: true,
       gravity: { y: 0 },
     },
   },

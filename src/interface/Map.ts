@@ -5,7 +5,7 @@ export default class Map {
   private scene: Phaser.Scene;
   map: any;
   miniMap: Phaser.GameObjects.Group;
-  s;
+  
   constructor(scene: Phaser.Scene, x: number, y: number, map: number[][]) {
     this.map = map;
     this.scene = scene;

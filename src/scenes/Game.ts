@@ -1,6 +1,5 @@
 import * as Phaser from "phaser";
 
-// import Beholder from "../enemies/Beholder";
 import Dungeon from "../dungeon/Dungeon";
 import Player from "../player/Player";
 import Door from "../dungeon/Door";
@@ -23,17 +22,19 @@ export default class Game extends Phaser.Scene {
   }
   reload() {
     this.scene.restart();
-    // Enemy.preloadAssets(this);
   }
   create() {
     // initiate projectile group
     this.projectiles = this.add.group();
-    // this.beholders = this.add.group();
     this.doors = this.physics.add.staticGroup();
     this.chests = this.physics.add.staticGroup();
     this.enemies = this.add.group();
     // create dungeon
-    this.dungeon = new Dungeon(this);
+    this.dungeon = new Dungeon(
+      this,
+      Math.floor(Math.random() * 11) + 10,
+      Math.floor(Math.random() * 11) + 10
+    );
     //create player
     this.player = new Player(
       this,

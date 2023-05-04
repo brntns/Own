@@ -12,21 +12,10 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.scale = 2;
     this.room = room;
     this.scene = scene;
-    scene.add.existing(this);
+    this.scene.add.existing(this);
     this.scene.physics.world.enable(this);
     this.body.setSize(16, 16);
     this.sprite = this;
-    const anims = scene.anims;
-
-    anims.create({
-      key: "idle_beholder",
-      frames: anims.generateFrameNumbers("beholder", {
-        start: 0,
-        end: 1,
-      }),
-      frameRate: 5,
-      repeat: -1,
-    });
     this.sprite.anims.play("idle_beholder");
   }
   removeLives() {

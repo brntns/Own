@@ -6,8 +6,6 @@ import Chest from "./Chest";
 
 const WIDTH = 608;
 const HEIGHT = 352;
-const dungeonwidth = 6;
-const dungeonheight = 6;
 const roomWidth = 11;
 
 // TODO: Needs to be generated as Room Map
@@ -36,12 +34,12 @@ export default class Dungeon {
   height: number;
   Map: number[][] = [];
 
-  constructor(scene: Game) {
-    this.width = dungeonwidth;
-    this.height = dungeonheight;
+  constructor(scene: Game, width: number, height: number) {
+    this.width = width;
+    this.height = height;
     this.scene = scene;
 
-    this.Map = this.generateDungeon(dungeonwidth, dungeonheight);
+    this.Map = this.generateDungeon(this.width, this.height);
     this.createDungeon();
     console.log(this.Map);
     this.dungeon = this.scene.make.tilemap({
@@ -82,7 +80,6 @@ export default class Dungeon {
         this.addRoom(dungeon, width, height);
       }
     }
-
     // Step 5: Return the generated dungeon
     return dungeon;
   }
@@ -152,31 +149,31 @@ export default class Dungeon {
     let rows = [];
     let rooms = [];
     // Generating Rooms
-    for (let mapHeight = 0; mapHeight < dungeonheight; mapHeight++) {
-      for (let mapWidth = 0; mapWidth < dungeonwidth; mapWidth++) {
+    for (let mapHeight = 0; mapHeight < this.height; mapHeight++) {
+      for (let mapWidth = 0; mapWidth < this.width; mapWidth++) {
         rooms.push(this.createRoom(mapHeight, mapWidth));
       }
       rows.push(rooms);
       rooms = [];
     }
     // @TODO THIS IS TOTAL MADNESS, IM DOING SOMETHING REALLY REALLY REALLY WRONG,
-    // made it work with casting an array onto a string and reversing it. That should'nt
+    // made it work with casting an array onto a string and reversing it. That shouldn't
     // be necessary, but for some reason temp[tempcounter].push(item) is pushing not only
     // the item but the parent and all its items.
 
     // create Dungeon Blank map
-    let temp = Array(dungeonheight * roomWidth).fill([]);
+    let temp = Array(this.height * roomWidth).fill([]);
 
     // Dungeonheight
     for (
       let dungeonheightcount = 0;
-      dungeonheightcount < dungeonheight;
+      dungeonheightcount < this.height;
       dungeonheightcount++
     ) {
       // Dungeonwidth
       for (
         let dungeonwidthcount = 0;
-        dungeonwidthcount < dungeonwidth;
+        dungeonwidthcount < this.width;
         dungeonwidthcount++
       ) {
         // Room
@@ -340,10 +337,10 @@ export default class Dungeon {
     if (width != 0 && this.Map[height][width - 1] == 1) {
       doors.left = 1;
     }
-    if (width != dungeonwidth - 1 && this.Map[height][width + 1] == 1) {
+    if (width != this.width - 1 && this.Map[height][width + 1] == 1) {
       doors.right = 1;
     }
-    if (height != dungeonheight - 1 && this.Map[height + 1][width] == 1) {
+    if (height != this.height - 1 && this.Map[height + 1][width] == 1) {
       doors.bottom = 1;
     }
     if (height != 0 && this.Map[height - 1][width] == 1) {
