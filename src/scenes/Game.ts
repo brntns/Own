@@ -4,6 +4,7 @@ import Dungeon from "../dungeon/Dungeon";
 import Player from "../player/Player";
 import Door from "../dungeon/Door";
 import Enemy from "../enemies/Enemy";
+import Chest from "../dungeon/Chest";
 export const WIDTH = 608;
 export const HEIGHT = 352;
 
@@ -14,7 +15,7 @@ export default class Game extends Phaser.Scene {
   dungeon!: Dungeon;
   doors!: Phaser.GameObjects.Group;
   doorCollider: Phaser.Physics.Arcade.Collider;
-  chests: Phaser.Physics.Arcade.StaticGroup;
+  chests: Phaser.GameObjects.Group;
   enemies: Phaser.GameObjects.Group;
 
   constructor() {
@@ -27,7 +28,7 @@ export default class Game extends Phaser.Scene {
     // initiate projectile group
     this.projectiles = this.add.group();
     this.doors = this.physics.add.staticGroup();
-    this.chests = this.physics.add.staticGroup();
+    this.chests = this.add.group();
     this.enemies = this.add.group();
     // create dungeon
     this.dungeon = new Dungeon(
@@ -43,8 +44,11 @@ export default class Game extends Phaser.Scene {
       15
     );
     this.createEnemies(this.dungeon.Map);
+    this.createChests(this.dungeon.Map);
+
     // Camera
     this.cameras.main.pan(this.player.sprite.x, this.player.sprite.y, 1600);
+
     // Collision
     const that = this;
     this.physics.add.collider(this.player.sprite, this.dungeon.map);
@@ -55,6 +59,13 @@ export default class Game extends Phaser.Scene {
     this.physics.add.collider(this.enemies, this.dungeon.map);
     this.physics.add.collider(this.enemies, this.player.sprite);
     this.physics.add.collider(this.enemies, this.enemies);
+    this.physics.add.collider(this.enemies, this.chests);
+
+    this.physics.add.collider(
+      this.chests,
+      this.player.sprite,
+      function (chest, sprite) {}
+    );
 
     this.physics.add.collider(
       this.projectiles,
@@ -84,8 +95,30 @@ export default class Game extends Phaser.Scene {
       }
     );
   }
-  createChests(){
+  createChests(map) {
+    const rooms = [];
 
+    // Get all rooms from the dungeon map
+    for (let row = 0; row < map.length; row++) {
+      for (let col = 0; col < map[row].length; col++) {
+        if (map[row][col] === 1) {
+          rooms.push({ x: col * WIDTH + 100, y: row * HEIGHT + 100, row, col });
+        }
+      }
+    }
+
+    // Create an enemy in each room
+    for (let i = 0; i < rooms.length; i++) {
+      const chest = new Chest(
+        this,
+        rooms[i].x + 100,
+        rooms[i].y + 100,
+        rooms[i].row * this.dungeon.Map.length + rooms[i].col,
+        { x: 24, y: 24 },
+        "chest"
+      );
+      this.chests.add(chest);
+    }
   }
   createEnemies(map) {
     const rooms = [];
