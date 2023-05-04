@@ -84,7 +84,9 @@ export default class Game extends Phaser.Scene {
       }
     );
   }
-
+  createChests(){
+    
+  }
   createEnemies(map) {
     const rooms = [];
 
@@ -104,21 +106,20 @@ export default class Game extends Phaser.Scene {
           this,
           rooms[i].x + index * 100,
           rooms[i].y + index * 100,
-          rooms[i].row * this.dungeon.Map.length + rooms[i].col
+          rooms[i].row * this.dungeon.Map.length + rooms[i].col,
+          { x: 16, y: 16 },
+          "beholder",
+          3
         );
         this.enemies.add(enemy);
       }
     }
-    console.log(this.enemies);
   }
   update() {
     this.player.update();
     this.enemies.getChildren().forEach((enemy: Enemy) => {
-      enemy.moveToPlayer(
-        this.player.sprite.x,
-        this.player.sprite.y,
-        this.dungeon.room
-      );
+      // console.log(enemy);
+      enemy.moveToPlayer(this.player.sprite, this.dungeon.room);
     });
   }
 }

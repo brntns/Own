@@ -8,7 +8,6 @@ const WIDTH = 608;
 const HEIGHT = 352;
 const roomWidth = 11;
 
-// TODO: Needs to be generated as Room Map
 let Map: number[][] = [];
 // MiniMap
 let Navigation: number[][] = [
@@ -41,7 +40,6 @@ export default class Dungeon {
 
     this.Map = this.generateDungeon(this.width, this.height);
     this.createDungeon();
-    console.log(this.Map);
     this.dungeon = this.scene.make.tilemap({
       data: this.data,
       tileWidth: 32,
@@ -60,17 +58,14 @@ export default class Dungeon {
     for (let i = 0; i < height; i++) {
       dungeon.push(new Array(width).fill(0));
     }
-
     // Step 2: Choose a random starting room
     let startX = Math.floor(Math.random() * width);
     let startY = Math.floor(Math.random() * height);
     dungeon[startY][startX] = 1;
     this.navi = [startY, startX];
     this.room = startY * dungeon.length + startX;
-
     // Step 3: Call the recursive function to visit all rooms
     this.visitRoom(startX, startY, dungeon, width, height);
-
     // Step 4: Ensure there are at least 20% rooms
     let roomCount = dungeon.flat().filter((val) => val === 1).length;
     let minRoomCount = Math.ceil(width * height * 0.2);
@@ -213,7 +208,7 @@ export default class Dungeon {
     this.map.setCollision([0, 1, 2, 6, 8, 10, 11, 12, 13, 15, 16, 17]);
     this.generateDoors(this.map);
     eventsCenter.emit("update-map", Navigation);
-    console.log(this.navi);
+    // console.log(this.navi);
   }
   createRoom(height: number, width: number) {
     const doors = this.hasDoors(height, width);
@@ -238,10 +233,8 @@ export default class Dungeon {
             }
             //  Wall Top
             else {
-              //   col.push(1);
               col.push(1);
             }
-            // console.log(roomWidth, doors);
           }
           // bottom
           else if (roomHeight % 10 == 0) {
@@ -311,11 +304,7 @@ export default class Dungeon {
           }
           // floor
           else {
-            // if (this.rand(0, 10) < 9) {
             col.push(25);
-            // } else {
-            // col.push(17);
-            // }
           }
         } else {
           col.push(0);
@@ -346,8 +335,6 @@ export default class Dungeon {
     if (height != 0 && this.Map[height - 1][width] == 1) {
       doors.top = 1;
     }
-
-    // console.log(doors);
     return doors;
   }
 
@@ -358,22 +345,17 @@ export default class Dungeon {
     if (mapy) {
       mapy.forEachTile((t: any, i) => {
         if (t && t.index) {
-          // console.log(i);
           if (t.index == 3) {
             new Door(this.scene, t.pixelX + 16, t.pixelY + 17, "top");
-            // console.log("new door top");
           }
           if (t.index == 9) {
             new Door(this.scene, t.pixelX + 16, t.pixelY + 15, "bottom");
-            // console.log('new door bottom')
           }
           if (t.index == 4) {
             new Door(this.scene, t.pixelX + 17, t.pixelY + 16, "left");
-            // console.log('new door left')
           }
           if (t.index == 5) {
             new Door(this.scene, t.pixelX + 15, t.pixelY + 16, "right");
-            // console.log('new door rigth')
           }
         }
       });
@@ -399,14 +381,14 @@ export default class Dungeon {
         this.scene.player.sprite.x = this.scene.player.sprite.x - 100;
         relativeX = currentX - WIDTH * 0.5;
         relativeY = currentY + HEIGHT * 0.5;
-        console.log(relativeX, relativeY);
+        // console.log(relativeX, relativeY);
         this.scene.cameras.main.pan(relativeX, relativeY, 800);
         this.navi[1]--;
         break;
       case "right":
         relativeX = currentX + WIDTH * 1.5;
         relativeY = currentY + HEIGHT * 0.5;
-        console.log(relativeX, relativeY);
+        // console.log(relativeX, relativeY);
         this.scene.player.sprite.x = this.scene.player.sprite.x + 100;
         this.scene.cameras.main.pan(relativeX, relativeY, 800);
         this.navi[1]++;
@@ -416,14 +398,13 @@ export default class Dungeon {
         relativeY = currentY - HEIGHT * 0.5;
         console.log(relativeX, relativeY);
         this.scene.player.sprite.y = this.scene.player.sprite.y - 100;
-
         this.scene.cameras.main.pan(relativeX, relativeY, 800);
         this.navi[0]--;
         break;
       case "bottom":
         relativeX = currentX + WIDTH * 0.5;
         relativeY = currentY + HEIGHT * 1.5;
-        console.log(relativeX, relativeY);
+        // console.log(relativeX, relativeY);
         this.scene.player.sprite.y = this.scene.player.sprite.y + 100;
         this.scene.cameras.main.pan(relativeX, relativeY, 800);
         this.navi[0]++;
@@ -440,7 +421,7 @@ export default class Dungeon {
     // if (this.scene.beholders.getMatching("room", this.room).length == 0) {
     //   // this.openDoors();
     // }
-    console.log(this.room);
+    // console.log(this.room);
   }
 
   closeDoors() {

@@ -27,8 +27,6 @@ export default class Preloader extends Phaser.Scene {
     this.load.spritesheet("door", "dungeons/walls.png", {
       frameWidth: 32,
     });
-
-  
   }
 
   create() {

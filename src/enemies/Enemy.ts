@@ -4,19 +4,28 @@ import Game from "../scenes/Game";
 export default class Enemy extends Phaser.Physics.Arcade.Sprite {
   scene: Game;
   room: number;
-  lives = 3;
+  lives: number;
   sprite: Phaser.Physics.Arcade.Sprite;
 
-  constructor(scene: Game, x, y, room) {
-    super(scene, x, y, "beholder");
+  constructor(
+    scene: Game,
+    x: number,
+    y: number,
+    room: number,
+    size: { x: number; y: number },
+    texture: string,
+    lives: number
+  ) {
+    super(scene, x, y, texture);
     this.scale = 2;
     this.room = room;
     this.scene = scene;
+    this.lives = lives;
     this.scene.add.existing(this);
     this.scene.physics.world.enable(this);
-    this.body.setSize(16, 16);
+    this.body.setSize(size.x, size.y);
     this.sprite = this;
-    this.sprite.anims.play("idle_beholder");
+    this.sprite.anims.play("idle_" + texture);
   }
   removeLives() {
     this.lives--;
@@ -29,14 +38,30 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     console.log("destroying");
     super.destroy(fromScene);
   }
-  moveToPlayer(playerX: number, playerY: number, room: number): void {
+  moveToPlayer(player: Phaser.Physics.Arcade.Sprite, room: number): void {
     if (this.room === room) {
-      const speed = 20; // Set a movement speed
-      const angle = Phaser.Math.Angle.Between(this.x, this.y, playerX, playerY);
-      const velocity = new Phaser.Math.Vector2(Math.cos(angle), Math.sin(angle))
-        .normalize()
-        .scale(speed);
-      this.setVelocity(velocity.x, velocity.y);
+      const distance = Phaser.Math.Distance.Between(
+        this.sprite.x,
+        this.sprite.y,
+        player.x,
+        player.y
+      );
+
+      if (distance <= 150) {
+        const angle = Phaser.Math.Angle.Between(
+          this.sprite.x,
+          this.sprite.y,
+          player.x,
+          player.y
+        );
+        const speed = 20;
+        const velocity = new Phaser.Math.Vector2();
+        Phaser.Math.Easing.Sine.Out(0.5);
+        velocity.setToPolar(angle, speed);
+        this.sprite.setVelocity(velocity.x, velocity.y);
+      } else {
+        this.sprite.setVelocity(0, 0);
+      }
     }
   }
 }
