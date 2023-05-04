@@ -85,7 +85,7 @@ export default class Game extends Phaser.Scene {
     );
   }
   createChests(){
-    
+
   }
   createEnemies(map) {
     const rooms = [];
@@ -118,7 +118,6 @@ export default class Game extends Phaser.Scene {
   update() {
     this.player.update();
     this.enemies.getChildren().forEach((enemy: Enemy) => {
-      // console.log(enemy);
       enemy.moveToPlayer(this.player.sprite, this.dungeon.room);
     });
   }
