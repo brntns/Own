@@ -6,6 +6,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
   room: number;
   lives: number;
   sprite: Phaser.Physics.Arcade.Sprite;
+  private nextFire = 0;
 
   constructor(
     scene: Game,
@@ -38,6 +39,15 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     console.log("destroying");
     super.destroy(fromScene);
   }
+  private fireBullet(player: Phaser.Physics.Arcade.Sprite): void {
+    if (this.scene.time.now > this.nextFire) {
+      const bullet = this.scene.physics.add.sprite(this.x, this.y, 'bullet');
+      this.scene.enemyprojectiles.add(this);
+      bullet.setImmovable(true);
+      this.scene.physics.moveToObject(bullet, player, 300);
+      this.nextFire = this.scene.time.now + 3000; // 3 seconds delay for the next bullet
+    }
+  }
   moveToPlayer(player: Phaser.Physics.Arcade.Sprite, room: number): void {
     if (this.room === room) {
       const distance = Phaser.Math.Distance.Between(
@@ -48,6 +58,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
       );
 
       if (distance <= 150) {
+        this.fireBullet(player);
         const angle = Phaser.Math.Angle.Between(
           this.sprite.x,
           this.sprite.y,

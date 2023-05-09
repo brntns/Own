@@ -5,12 +5,14 @@ import Player from "../player/Player";
 import Door from "../dungeon/Door";
 import Enemy from "../enemies/Enemy";
 import Chest from "../dungeon/Chest";
+import Boss from "../enemies/Boss";
 export const WIDTH = 608;
 export const HEIGHT = 352;
 
 export default class Game extends Phaser.Scene {
   player!: Player;
   projectiles!: Phaser.GameObjects.Group;
+  enemyprojectiles!: Phaser.GameObjects.Group;
   beholders!: Phaser.GameObjects.Group;
   dungeon!: Dungeon;
   doors!: Phaser.GameObjects.Group;
@@ -27,9 +29,11 @@ export default class Game extends Phaser.Scene {
   create() {
     // initiate projectile group
     this.projectiles = this.add.group();
+    this.enemyprojectiles = this.add.group();
     this.doors = this.physics.add.staticGroup();
     this.chests = this.add.group();
     this.enemies = this.add.group();
+
     // create dungeon
     this.dungeon = new Dungeon(
       this,
@@ -146,6 +150,11 @@ export default class Game extends Phaser.Scene {
         );
         this.enemies.add(enemy);
       }
+      const boss = new Boss(
+        this,
+        rooms[i].x +  300,
+        rooms[i].y + 100
+      );
     }
   }
   update() {
